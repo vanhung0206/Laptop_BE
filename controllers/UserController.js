@@ -10,11 +10,169 @@ const { TIME_SECRET, SECRETKEY, url_verifyEmail, url_changePassord } =
     process.env;
 
 module.exports = {
-    registerUser: async (req, res) => {},
-    registerUserFacebook: async (req, res) => {},
-    forgetPassword: async (req, res) => {},
-    checkTokenValid: async (req, res) => {},
-    forgotChangePassword: async (req, res) => {},
+    registerUser: async (req, res) => {
+        const { username, password, phone, email } = req.body;
+
+        const checkUserName = await UserModel.find({ username });
+        const checkEmail = await UserModel.find({ email });
+        if (checkUserName.length > 0) {
+           return res.json({
+                statusCode: 404,
+                msg: "Tên tài khoản đã được đăng ký"
+            })
+        }
+        if (checkEmail.length > 0) {
+           return res.json({
+                statusCode: 404,
+                msg: "Email đã được đăng ký"
+            })
+        }
+        if (username.length <= 6 || password.length <= 6) {
+           return res.json({
+                statusCode: 404,
+                msg: "Mật khẩu và tài khoản phải nhiều hơn 6 kí tự"
+            })
+        }
+        const HashPassword = bcrypt.hashSync(password, saltRounds);
+        const NewUser = new UserModel({
+            username,
+            password: HashPassword,
+            name: username,
+            phone,
+            email,
+            role: "USER",
+            image: "https://cdn.shortpixel.ai/client/q_glossy,ret_img,w_632,h_316/https://gocsuckhoe.com/wp-content/uploads/2020/09/avatar-facebook-632x316.jpg",
+            verificationcode: randomstring.generate(16),
+            enable: false,
+        });
+        try {
+            const user = await NewUser.save();
+            sendmail.VerifyEmail(email, url_verifyEmail + user.verificationcode);
+          return  res.json({
+                statusCode: 200,
+                msg: "Tạo tài khoản thành công",
+            })
+        }
+        catch { err } {
+           return res.json({
+                statusCode: 404,
+                msg: err,
+            })
+        }
+    },
+    registerUserFacebook : async (req,res)=>{
+        const {username,password,name,email,image} = req.body;
+        const checkEmail = await UserModel.find({
+            email
+        });
+      
+         if(checkEmail.length>0){
+            if(checkEmail[0].username==username){
+                return res.json({
+                    statusCode : 200,
+                    msg : "Thành công",
+                })
+            }
+            else{
+                return res.json({
+                    statusCode : 404,
+                    msg : "Email đã được đăng ký ",
+                })
+            }
+        }
+        const HashPassword = bcrypt.hashSync(password, saltRounds);
+        const NewUser = new UserModel({
+            username,
+            password: HashPassword,
+            name,
+            email,
+            role: "USER",
+            image,
+            enable: true,
+        });
+        try {
+            const user = await NewUser.save();
+               return  res.json({
+                statusCode: 200,
+                msg: "Tạo tài khoản thành công",
+            })
+        }
+        catch { err } {
+           return res.json({
+                statusCode: 404,
+                msg: err,
+            })
+        }
+
+
+    },
+    forgetPassword : async (req,res)=>{
+        const {email} = req.body;
+        try{
+            const user = await UserModel.findOne({
+                email,
+            });
+            if(user){
+                user.forgotpassword =await jwt.generateToken(user,SECRETKEY,TIME_SECRET);
+                await user.save();
+                sendmail.ChangePassword(email,url_changePassord+user.forgotpassword);
+                return res.json({
+                    status :200,
+                    msg : "Vui lòng đăng nhập vào gmail để thay đổi password",
+                })
+
+            }
+            else{
+                return res.json({
+                    status :404,
+                    msg : "Tài khoản email chưa được đăng ký",
+                })
+            }
+        }
+        catch(err){
+            return res.json({
+                status :404,
+                msg : "Có lỗi trong quá trình ! vui lòng thử lại",
+            })
+        }
+    },
+    checkTokenValid : async (req,res)=>{
+        const {token} = req.params;
+        try{
+            const UserJwt = await jwt.verifyToken(token,SECRETKEY);
+            return res.json({
+                status : 200,
+            })
+        }
+        catch(err){
+            return res.json({
+                status : 404,
+            })
+        }
+    },
+    forgotChangePassword : async(req,res)=>{
+        const {id} = req.params;
+        const {password} = req.body;
+
+        try{
+            const UserJwt = await jwt.verifyToken(id,SECRETKEY);
+            const user =await UserModel.findById(UserJwt.data._id);
+            const HashPassword = bcrypt.hashSync(password, saltRounds);
+            user.password = HashPassword;
+            await user.save();
+            return res.json({
+                status : 200,
+            })
+
+        }
+        catch(err){
+            return res.json({
+                status : 500,
+                msg : err,
+            })
+        }
+
+    },
     loginUser: async (req, res) => {},
     verifyCode: async (req, res) => {},
     getUser: async (req, res) => {},
