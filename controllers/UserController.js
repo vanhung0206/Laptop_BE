@@ -284,45 +284,7 @@ module.exports = {
             })
         }
     },
-    updateUser: async(req,res)=>{
-        const { _id } = req.user.data;
-        const {phone,sex,ngaysinh,currentPassword,newPassword,name} = req.body;
-        const user = await UserModel.findById(_id);
-        if(req.file){
-            user.image="http://localhost:8080/image/"+req.file.originalname;
-        }
-        if(currentPassword||newPassword){
-            if(bcrypt.compareSync(currentPassword,user.password)){
-                user.password=bcrypt.hashSync(newPassword,saltRounds);
-            }
-            else{
-                return res.json({
-                    msg:"Password hiện tại chưa đúng",
-                    statusCode:404,                   
-                })   
-            }
-        }
-        user.phone=phone;
-        user.sex=sex;
-        user.ngaysinh=ngaysinh;
-        user.name=name;
-        user.save();
-        return res.json({
-            msg:"Cập nhật tài khoản thành công",
-            statusCode:200,
-        })
-    },
-    getAllUser : async(req,res)=>{
-        return res.json(await UserModel.find({}));
-    },
-    deleteUser : async (req,res)=>{
-        const {id} = req.body;
-        try{
-            await UserModel.findByIdAndRemove(id);
-            return res.json("Thành công");
-        }
-        catch(err){
-            return res.status(500).json(err);
-        }
-    }
+    updateUser: async (req, res) => {},
+    getAllUser: async (req, res) => {},
+    deleteUser: async (req, res) => {},
 };
