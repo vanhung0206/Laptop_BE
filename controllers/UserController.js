@@ -173,7 +173,41 @@ module.exports = {
         }
 
     },
-    loginUser: async (req, res) => {},
+    loginUser: async (req, res) => {
+        const {username,password} = req.body;
+        try{
+            const checkUsername = await UserModel.findOne({
+                username
+            });
+            if(!checkUsername.enable){
+                return res.json({
+                    statusCode : 404,
+                    msg : "Tài khoản chưa được kích hoạt vui lòng đăng nhập vào gmail để kích hoạt"
+                })
+            }
+            if(bcrypt.compareSync(password,checkUsername.password)){
+                const token = await jwt.generateToken(checkUsername,SECRETKEY,TIME_SECRET);
+                return res.json({
+                    statusCode : 200,
+                    jwt : token,
+                    msg : "Đăng nhập thành công",
+                })
+            }
+            else{
+                return res.json({
+                    statusCode : 404,
+                    msg : "Mật khẩu không chính xác! vui lòng nhập lại mật khẩu",
+                })
+            }
+        }
+        catch(err){
+            console.log(err);
+            res.json({
+                statusCode: 403,
+                msg : "Tài khoản không tồn tại"
+            })
+        }
+    },
     verifyCode: async (req, res) => {},
     getUser: async (req, res) => {},
     updateUser: async (req, res) => {},
