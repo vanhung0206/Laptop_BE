@@ -111,9 +111,86 @@ module.exports = {
     },
     getProductByCategory: async (req, res) => {},
     getProductById: async (req, res) => {},
-    postComment: async (req, res) => {},
-    postReply: async (req, res) => {},
-    getComment: async (req, res) => {},
+    postComment: async (req, res) => {
+        const { start, content } = req.body;
+        // id product
+        const { id } = req.params;
+        // id user
+        const { _id } = req.user.data;
+        try {
+            const user1 = await User.findById(_id);
+            // console.log(user1)
+            const newComment = new CommentModel({
+                user: user1,
+                start,
+                content,
+            });
+            const temp = await newComment.save();
+            // console.log(temp);
+            const product = await ProductModel.findById(id);
+            console.log(product);
+            product.comment.push(temp);
+            const newproduct = await product.save();
+            return res.json(newproduct);
+        } catch (err) {
+            res.json(err);
+        }
+    },
+    postReply: async (req, res) => {
+        const { content } = req.body;
+        // id product
+        const { id } = req.params;
+        const { idcomment } = req.params;
+        // id user
+        const { _id } = req.user.data;
+        try {
+            const user1 = await User.findById(_id);
+            // console.log(user1)
+            // const comment=await CommentModel.findById(idcomment);
+            // comment.reply.push({
+            //     user:user1,
+            //     content
+            // });
+            // const temp = await comment.save();
+            const product = await ProductModel.findById(id);
+            for (let i = 0; i < product.comment.length; i++) {
+                if (product.comment[i]._id == idcomment) {
+                    product.comment[i].reply.push({
+                        user: user1,
+                        content,
+                        createdBy: Date.now(),
+                    });
+                    break;
+                }
+                console.log(idcomment);
+                console.log(product.comment[i]._id);
+            }
+            const newproduct = await product.save();
+            return res.json(newproduct);
+        } catch (err) {
+            res.json(err);
+        }
+    },
+    getComment: async (req, res) => {
+        // id product
+        const { id } = req.params;
+        let { page } = req.query;
+        page = page ? page : 1;
+        const cmtproduct = await ProductModel.findById(id);
+        return res.json({
+            listComment: cmtproduct.comment,
+            totalPage: parseInt(cmtproduct.comment.length / 10) + 1,
+            commentPerPage:
+                page == 1
+                    ? cmtproduct.comment.length < 10
+                        ? cmtproduct.comment.length
+                        : 10
+                    : cmtproduct.comment.length < page * 10
+                    ? cmtproduct.comment.length - 10 * (page - 1)
+                    : 10,
+            totalComment: cmtproduct.comment.length,
+        });
+    },
     createProduct: async (req, res) => {},
     updateProduct: async (req, res) => {},
 };
