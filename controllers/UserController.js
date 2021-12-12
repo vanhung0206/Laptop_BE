@@ -49,7 +49,7 @@ module.exports = {
             const user = await NewUser.save();
             sendmail.VerifyEmail(
                 email,
-                url_verifyEmail + user.verificationcode
+                url_verifyEmail + user.verificationcode,
             );
             return res.json({
                 statusCode: 200,
@@ -120,12 +120,12 @@ module.exports = {
                 user.forgotpassword = await jwt.generateToken(
                     user,
                     SECRETKEY,
-                    TIME_SECRET
+                    TIME_SECRET,
                 );
                 await user.save();
                 sendmail.ChangePassword(
                     email,
-                    url_changePassord + user.forgotpassword
+                    url_changePassord + user.forgotpassword,
                 );
                 return res.json({
                     status: 200,
@@ -193,7 +193,7 @@ module.exports = {
                 const token = await jwt.generateToken(
                     checkUsername,
                     SECRETKEY,
-                    TIME_SECRET
+                    TIME_SECRET,
                 );
                 return res.json({
                     statusCode: 200,
@@ -250,79 +250,80 @@ module.exports = {
         }
     },
     loginUser: async (req, res) => {
-        const {username,password} = req.body;
-        try{
+        const { username, password } = req.body;
+        try {
             const checkUsername = await UserModel.findOne({
-                username
+                username,
             });
-            if(!checkUsername.enable){
+            if (!checkUsername.enable) {
                 return res.json({
-                    statusCode : 404,
-                    msg : "Tài khoản chưa được kích hoạt vui lòng đăng nhập vào gmail để kích hoạt"
-                })
+                    statusCode: 404,
+                    msg: "Tài khoản chưa được kích hoạt vui lòng đăng nhập vào gmail để kích hoạt",
+                });
             }
-            if(bcrypt.compareSync(password,checkUsername.password)){
-                const token = await jwt.generateToken(checkUsername,SECRETKEY,TIME_SECRET);
+            if (bcrypt.compareSync(password, checkUsername.password)) {
+                const token = await jwt.generateToken(
+                    checkUsername,
+                    SECRETKEY,
+                    TIME_SECRET,
+                );
                 return res.json({
-                    statusCode : 200,
-                    jwt : token,
-                    msg : "Đăng nhập thành công",
-                })
-            }
-            else{
+                    statusCode: 200,
+                    jwt: token,
+                    msg: "Đăng nhập thành công",
+                });
+            } else {
                 return res.json({
-                    statusCode : 404,
-                    msg : "Mật khẩu không chính xác! vui lòng nhập lại mật khẩu",
-                })
+                    statusCode: 404,
+                    msg: "Mật khẩu không chính xác! vui lòng nhập lại mật khẩu",
+                });
             }
-        }
-        catch(err){
+        } catch (err) {
             console.log(err);
             res.json({
                 statusCode: 403,
-                msg : "Tài khoản không tồn tại"
-            })
+                msg: "Tài khoản không tồn tại",
+            });
         }
     },
-    updateUser: async(req,res)=>{
+    updateUser: async (req, res) => {
         const { _id } = req.user.data;
-        const {phone,sex,ngaysinh,currentPassword,newPassword,name} = req.body;
+        const { phone, sex, ngaysinh, currentPassword, newPassword, name } =
+            req.body;
         const user = await UserModel.findById(_id);
-        if(req.file){
-            user.image="http://localhost:8080/image/"+req.file.originalname;
+        if (req.file) {
+            user.image = "http://localhost:8080/image/" + req.file.originalname;
         }
-        if(currentPassword||newPassword){
-            if(bcrypt.compareSync(currentPassword,user.password)){
-                user.password=bcrypt.hashSync(newPassword,saltRounds);
-            }
-            else{
+        if (currentPassword || newPassword) {
+            if (bcrypt.compareSync(currentPassword, user.password)) {
+                user.password = bcrypt.hashSync(newPassword, saltRounds);
+            } else {
                 return res.json({
-                    msg:"Password hiện tại chưa đúng",
-                    statusCode:404,                   
-                })   
+                    msg: "Password hiện tại chưa đúng",
+                    statusCode: 404,
+                });
             }
         }
-        user.phone=phone;
-        user.sex=sex;
-        user.ngaysinh=ngaysinh;
-        user.name=name;
+        user.phone = phone;
+        user.sex = sex;
+        user.ngaysinh = ngaysinh;
+        user.name = name;
         user.save();
         return res.json({
-            msg:"Cập nhật tài khoản thành công",
-            statusCode:200,
-        })
+            msg: "Cập nhật tài khoản thành công",
+            statusCode: 200,
+        });
     },
-    getAllUser : async(req,res)=>{
+    getAllUser: async (req, res) => {
         return res.json(await UserModel.find({}));
     },
-    deleteUser : async (req,res)=>{
-        const {id} = req.body;
-        try{
+    deleteUser: async (req, res) => {
+        const { id } = req.body;
+        try {
             await UserModel.findByIdAndRemove(id);
             return res.json("Thành công");
-        }
-        catch(err){
+        } catch (err) {
             return res.status(500).json(err);
         }
-    }
+    },
 };
