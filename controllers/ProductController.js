@@ -1,6 +1,7 @@
 const ProductModel = require("../model/ProductModel");
 const CommentModel = require("../model/commentModel");
 const User = require("../model/UserModel");
+const baseURL = process.env.BASE_URL || "http://localhost:8080";
 
 module.exports = {
     // Get all products
@@ -300,14 +301,11 @@ module.exports = {
         var image, ListImage;
         if (req.files) {
             if (req.files.image) {
-                image =
-                    "http://localhost:8080/image/product/" +
-                    req.files.image[0].originalname;
+                image = `${baseURL}/image/product/${req.files.image[0].originalname}`;
             }
             if (req.files.listimage) {
                 ListImage = req.files.listimage.map(
-                    (item) =>
-                        `http://localhost:8080/image/product/${item.originalname}`
+                    (item) => `${baseURL}/image/product/${item.originalname}`,
                 );
             }
         }
@@ -334,14 +332,11 @@ module.exports = {
         var image, ListImage;
         if (req.files) {
             if (req.files.image) {
-                image =
-                    "http://localhost:8080/image/product/" +
-                    req.files.image[0].originalname;
+                image = `${baseURL}/image/product/${req.files.image[0].originalname}`;
             }
             if (req.files.listimage) {
                 ListImage = req.files.listimage.map(
-                    (item) =>
-                        `http://localhost:8080/image/product/${item.originalname}`
+                    (item) => `${baseURL}/image/product/${item.originalname}`,
                 );
             }
         }

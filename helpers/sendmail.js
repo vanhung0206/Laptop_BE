@@ -10,7 +10,7 @@ async function VerifyEmail(emailUser, url) {
     // Only needed if you don't have a real mail account for testing
 
     // create reusable transporter object using the default SMTP transport
-    let transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
         secure: false, // true for 465, false for other ports
@@ -22,7 +22,7 @@ async function VerifyEmail(emailUser, url) {
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-        from: '"Dũng Nguyên 👻" <nguyenducdungg121@example.com>', // sender address
+        from: '"F8 Shop" <web.bocau.duathu@gmail.com>', // sender address
         to: emailUser,
         subject: "Xác minh địa chỉ email", // Subject line
         html: `
@@ -33,10 +33,8 @@ async function VerifyEmail(emailUser, url) {
             </div>
         `, // html body
     });
-
-
 }
-async function ChangePassword (emailUser,url){
+async function ChangePassword(emailUser, url) {
     let transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -49,7 +47,7 @@ async function ChangePassword (emailUser,url){
 
     // send mail with defined transport object
     let info = await transporter.sendMail({
-        from: '"Dũng Nguyên 👻" <nguyenducdungg121@example.com>', // sender address
+        from: '"F8 Shop" <web.bocau.duathu@gmail.com>', // sender address
         to: emailUser,
         subject: "Thay đổi mật khẩu", // Subject line
         html: `

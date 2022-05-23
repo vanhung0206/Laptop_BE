@@ -6,6 +6,8 @@ var randomstring = require("randomstring");
 const sendmail = require("../helpers/sendmail");
 require("dotenv").config();
 
+const baseURL = process.env.BASE_URL || "http://localhost:8080";
+
 const { TIME_SECRET, SECRETKEY, url_verifyEmail, url_changePassord } =
     process.env;
 
@@ -49,7 +51,7 @@ module.exports = {
             const user = await NewUser.save();
             sendmail.VerifyEmail(
                 email,
-                url_verifyEmail + user.verificationcode
+                url_verifyEmail + user.verificationcode,
             );
             return res.json({
                 statusCode: 200,
@@ -120,12 +122,12 @@ module.exports = {
                 user.forgotpassword = await jwt.generateToken(
                     user,
                     SECRETKEY,
-                    TIME_SECRET
+                    TIME_SECRET,
                 );
                 await user.save();
                 sendmail.ChangePassword(
                     email,
-                    url_changePassord + user.forgotpassword
+                    url_changePassord + user.forgotpassword,
                 );
                 return res.json({
                     status: 200,
@@ -193,7 +195,7 @@ module.exports = {
                 const token = await jwt.generateToken(
                     checkUsername,
                     SECRETKEY,
-                    TIME_SECRET
+                    TIME_SECRET,
                 );
                 return res.json({
                     statusCode: 200,
@@ -256,7 +258,7 @@ module.exports = {
         const user = await UserModel.findById(_id);
         console.log(req.file);
         if (req.file) {
-            user.image = "http://localhost:8080/image/" + req.file.originalname;
+            user.image = `${baseURL}/image/${req.file.originalname}`;
         }
         if (currentPassword || newPassword) {
             if (bcrypt.compareSync(currentPassword, user.password)) {
