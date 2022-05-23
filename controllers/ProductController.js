@@ -231,6 +231,7 @@ module.exports = {
             const temp = await newComment.save();
             // console.log(temp);
             const product = await ProductModel.findById(id);
+            console.log(product);
             product.comment.push(temp);
             const newproduct = await product.save();
             return res.json(newproduct);
@@ -264,6 +265,8 @@ module.exports = {
                     });
                     break;
                 }
+                console.log(idcomment);
+                console.log(product.comment[i]._id);
             }
             const newproduct = await product.save();
             return res.json(newproduct);

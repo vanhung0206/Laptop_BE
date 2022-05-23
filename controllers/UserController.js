@@ -249,48 +249,12 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    loginUser: async (req, res) => {
-        const { username, password } = req.body;
-        try {
-            const checkUsername = await UserModel.findOne({
-                username,
-            });
-            if (!checkUsername.enable) {
-                return res.json({
-                    statusCode: 404,
-                    msg: "Tài khoản chưa được kích hoạt vui lòng đăng nhập vào gmail để kích hoạt",
-                });
-            }
-            if (bcrypt.compareSync(password, checkUsername.password)) {
-                const token = await jwt.generateToken(
-                    checkUsername,
-                    SECRETKEY,
-                    TIME_SECRET,
-                );
-                return res.json({
-                    statusCode: 200,
-                    jwt: token,
-                    msg: "Đăng nhập thành công",
-                });
-            } else {
-                return res.json({
-                    statusCode: 404,
-                    msg: "Mật khẩu không chính xác! vui lòng nhập lại mật khẩu",
-                });
-            }
-        } catch (err) {
-            console.log(err);
-            res.json({
-                statusCode: 403,
-                msg: "Tài khoản không tồn tại",
-            });
-        }
-    },
     updateUser: async (req, res) => {
         const { _id } = req.user.data;
         const { phone, sex, ngaysinh, currentPassword, newPassword, name } =
             req.body;
         const user = await UserModel.findById(_id);
+        console.log(req.file);
         if (req.file) {
             user.image = "http://localhost:8080/image/" + req.file.originalname;
         }

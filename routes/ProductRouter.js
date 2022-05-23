@@ -36,11 +36,7 @@ Router.post(
     Authentication.isUserValid,
     ProductController.postReply,
 );
-Router.delete(
-    "/product",
-    Authentication.isAdmin,
-    ProductController.deleteProduct,
-);
+// Router.delete("/product",Authentication.isAdmin,ProductController.deleteProduct);
 Router.post(
     "/product",
     productUpload,

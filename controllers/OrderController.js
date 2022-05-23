@@ -172,81 +172,76 @@ module.exports = {
         const order = await OrderModel.find({ id_user: _id });
         return res.json(order);
     },
-    deleteOrder : async (req,res)=>{
-        const {_id} = req.body; // id Order 
+    deleteOrder: async (req, res) => {
+        const { _id } = req.body; // id Order
         const idUser = req.user.data._id; // id User
-        try{
-            const Order =await OrderModel.findOneAndDelete({
-                id_user : idUser,
+        try {
+            const Order = await OrderModel.findOneAndDelete({
+                id_user: idUser,
                 _id,
             });
             return res.json({
-                statusCode : 200,
-                msg : "Đã xóa đơn hàng"
-            })
-        }
-        catch(err){
+                statusCode: 200,
+                msg: "Đã xóa đơn hàng",
+            });
+        } catch (err) {
             return res.json({
-                statusCode : 404,
-                msg : err,
-            })
+                statusCode: 404,
+                msg: err,
+            });
         }
     },
-    cancelOrder : async (req,res)=>{
-
-        const {_id} = req.body; // id Order 
+    cancelOrder: async (req, res) => {
+        const { _id } = req.body; // id Order
         const idUser = req.user.data._id; // id User
-        try{
-            const Order =await OrderModel.findOne({
-                id_user : idUser,
+        try {
+            const Order = await OrderModel.findOne({
+                id_user: idUser,
                 _id,
             });
-            Order.cancelreason="0";
+            Order.cancelreason = "0";
             await Order.save();
             return res.json({
-                statusCode : 200,
-                msg : "Đã hủy đơn hàng"
-            })
-        }
-        catch(err){
+                statusCode: 200,
+                msg: "Đã hủy đơn hàng",
+            });
+        } catch (err) {
             return res.json({
-                statusCode : 404,
-                msg : err,
-            })
+                statusCode: 404,
+                msg: err,
+            });
         }
     },
-    reOrderPayment : async (req,res)=>{
-        const {_id} = req.body; // id Order 
+    reOrderPayment: async (req, res) => {
+        const { _id } = req.body; // id Order
         const idUser = req.user.data._id; // id User
-        try{
-            const Order =await OrderModel.findOne({
-                id_user : idUser,
+        try {
+            const Order = await OrderModel.findOne({
+                id_user: idUser,
                 _id,
             });
-            Order.status_order=false,
-            await Order.save();
+            (Order.status_order = false), await Order.save();
             return res.json({
-                statusCode : 200,
-                msg : "Đã đặt lại đơn hàng"
-            })
-        }
-        catch(err){
+                statusCode: 200,
+                msg: "Đã đặt lại đơn hàng",
+            });
+        } catch (err) {
             return res.json({
-                statusCode : 404,
-                msg : err,
-            })
+                statusCode: 404,
+                msg: err,
+            });
         }
     },
-    getAllOrder : async (req,res)=>{
+    getAllOrder: async (req, res) => {
         return res.json(await OrderModel.find({}));
     },
-    acceptOrder : async(req,res)=>{
-        const {_id} = req.body;
-        try{
+    acceptOrder: async (req, res) => {
+        const { _id } = req.body;
+        try {
             const order = await OrderModel.findById(_id);
             order.products.forEach(async (item) => {
                 const product = await ProductModel.findById(item._id);
-                if(product.quantity!=0){
+                if (product.quantity != 0) {
                     product.quantity--;
                 }
                 await product.save();
@@ -254,15 +249,14 @@ module.exports = {
             order.status_order = true;
             await order.save();
             return res.json({
-                statusCode : 200,
-                msg : "Duyệt đơn hàng thành công"
+                statusCode: 200,
+                msg: "Duyệt đơn hàng thành công",
+            });
+        } catch (err) {
+            return res.json({
+                statusCode: 404,
+                msg: "Duyệt đơn hàng thất bại ",
             });
         }
-        catch(err){
-            return res.json({
-                statusCode : 404,
-                msg : "Duyệt đơn hàng thất bại ",
-            })
-        }
-    }
+    },
 };
