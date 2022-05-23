@@ -6,6 +6,8 @@ var randomstring = require("randomstring");
 const sendmail = require("../helpers/sendmail");
 require("dotenv").config();
 
+const baseURL = process.env.BASE_URL || "http://localhost:8080";
+
 const { TIME_SECRET, SECRETKEY, url_verifyEmail, url_changePassord } =
     process.env;
 
@@ -256,7 +258,7 @@ module.exports = {
         const user = await UserModel.findById(_id);
         console.log(req.file);
         if (req.file) {
-            user.image = "http://localhost:8080/image/" + req.file.originalname;
+            user.image = `${baseURL}/image/${req.file.originalname}`;
         }
         if (currentPassword || newPassword) {
             if (bcrypt.compareSync(currentPassword, user.password)) {
