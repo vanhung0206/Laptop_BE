@@ -6,7 +6,7 @@ var randomstring = require("randomstring");
 const sendmail = require("../helpers/sendmail");
 require("dotenv").config();
 
-const baseURL = process.env.BASE_URL || "http://localhost:8080";
+const baseURL = process.env.BASE_URL || "";
 
 const { TIME_SECRET, SECRETKEY, url_verifyEmail, url_changePassord } =
     process.env;

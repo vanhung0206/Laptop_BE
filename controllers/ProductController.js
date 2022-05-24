@@ -1,7 +1,7 @@
 const ProductModel = require("../model/ProductModel");
 const CommentModel = require("../model/commentModel");
 const User = require("../model/UserModel");
-const baseURL = process.env.BASE_URL || "http://localhost:8080";
+const baseURL = process.env.BASE_URL || "";
 
 module.exports = {
     // Get all products
