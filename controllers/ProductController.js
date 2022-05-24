@@ -266,8 +266,8 @@ module.exports = {
                     });
                     break;
                 }
-                console.log(idcomment);
-                console.log(product.comment[i]._id);
+                // console.log(idcomment);
+                // console.log(product.comment[i]._id);
             }
             const newproduct = await product.save();
             return res.json(newproduct);
@@ -354,7 +354,7 @@ module.exports = {
             if (ListImage) {
                 product.ListImage = ListImage;
             }
-            console.log(12345);
+            // console.log(12345);
             return res.json(await product.save());
         } catch (err) {}
     },
