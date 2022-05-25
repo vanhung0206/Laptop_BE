@@ -8,8 +8,7 @@ require("dotenv").config();
 
 const baseURL = process.env.BASE_URL || "";
 
-const { TIME_SECRET, SECRETKEY, url_verifyEmail, url_changePassord } =
-    process.env;
+const { TIME_SECRET, SECRETKEY, url_verifyEmail, DOMAIN_FE } = process.env;
 
 module.exports = {
     registerUser: async (req, res) => {
@@ -127,7 +126,7 @@ module.exports = {
                 await user.save();
                 sendmail.ChangePassword(
                     email,
-                    url_changePassord + user.forgotpassword,
+                    `${DOMAIN_FE}forgot/${user.forgotpassword}`,
                 );
                 return res.json({
                     status: 200,
@@ -181,10 +180,12 @@ module.exports = {
     },
     loginUser: async (req, res) => {
         const { username, password } = req.body;
+
         try {
             const checkUsername = await UserModel.findOne({
-                username,
+                email: username,
             });
+
             if (!checkUsername.enable) {
                 return res.json({
                     statusCode: 404,

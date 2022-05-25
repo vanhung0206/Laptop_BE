@@ -50,4 +50,6 @@ Router.put(
     ProductController.updateProduct,
 );
 
+// Router.get("/replace-image", ProductController.replaceImage);
+
 module.exports = Router;

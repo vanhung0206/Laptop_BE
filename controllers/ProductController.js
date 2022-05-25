@@ -3,6 +3,26 @@ const CommentModel = require("../model/commentModel");
 const User = require("../model/UserModel");
 const baseURL = process.env.BASE_URL || "";
 
+function replaceString(data) {
+    for (let item of data) {
+        if (item.ListImage && item.ListImage.length > 0) {
+            const listNewImage = item.ListImage.map((item) =>
+                item.replace(
+                    "http://localhost:8080",
+                    "https://api-laptop-shop.herokuapp.com",
+                ),
+            );
+            item.ListImage = listNewImage;
+        }
+        if (item.image) {
+            item.image = item.image.replace(
+                "http://localhost:8080",
+                "https://api-laptop-shop.herokuapp.com",
+            );
+        }
+    }
+}
+
 module.exports = {
     // Get all products
     getAllProduct: async (req, res) => {
@@ -366,5 +386,17 @@ module.exports = {
         } catch (err) {
             return res.json(err);
         }
+    },
+
+    async replaceImage(req, res) {
+        const data = await ProductModel.find({});
+        const listPromise = [];
+
+        replaceString(data);
+        for (let item of data) {
+            listPromise.push(item.save());
+        }
+        const result = await Promise.all(listPromise);
+        res.json(result);
     },
 };
