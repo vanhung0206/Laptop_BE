@@ -150,7 +150,7 @@ module.exports = {
         var idOrder = req.query.vnp_TxnRef.split("_")[0];
         if (secureHash === checkSum) {
             //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-            if (vnp_Params.vnp_ResponseCode == "00") {
+            if (vnp_Params.vnp_ResponseCode === "00") {
                 var UpdateStatusOrder = await OrderModel.findById(idOrder);
                 UpdateStatusOrder.status_order = true;
                 await UpdateStatusOrder.save();

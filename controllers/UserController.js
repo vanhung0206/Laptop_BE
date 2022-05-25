@@ -73,7 +73,7 @@ module.exports = {
         });
 
         if (checkEmail.length > 0) {
-            if (checkEmail[0].username == username) {
+            if (checkEmail[0].username === username) {
                 return res.json({
                     statusCode: 200,
                     msg: "Thành công",

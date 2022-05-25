@@ -50,7 +50,7 @@ module.exports = {
                     },
                 })
                     .sort({ newprice: sort })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     title: {
@@ -73,7 +73,7 @@ module.exports = {
                         ...filterPrice,
                     },
                 })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     title: {
@@ -95,7 +95,7 @@ module.exports = {
                     },
                 })
                     .sort({ newprice: sort })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     newprice: {
@@ -110,7 +110,7 @@ module.exports = {
                         ...filterPrice,
                     },
                 })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
             }
             totalProduct = await ProductModel.find({
@@ -140,7 +140,7 @@ module.exports = {
         max ? (filterPrice = { $lte: max }) : {}; // kiểm tra nếu có max thì khởi tạo object max;
 
         var listProducts, totalProduct; //khởi tạo biến toàn cục
-        if (category == "PK") {
+        if (category === "PK") {
             if (sort) {
                 listProducts = await ProductModel.find({
                     $and: [{ category: { $ne: "Laptop" } }, { type }],
@@ -150,7 +150,7 @@ module.exports = {
                     },
                 })
                     .sort({ newprice: sort })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     $and: [{ category: { $ne: "Laptop" } }, { type }],
@@ -167,7 +167,7 @@ module.exports = {
                         ...filterPrice,
                     },
                 })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     $and: [{ category: { $ne: "Laptop" } }, { type }],
@@ -187,7 +187,7 @@ module.exports = {
                     },
                 })
                     .sort({ newprice: sort })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     $and: [{ category: category }, { type }],
@@ -204,7 +204,7 @@ module.exports = {
                         ...filterPrice,
                     },
                 })
-                    .skip(page == 1 ? 0 : (page - 1) * 15)
+                    .skip(page === 1 ? 0 : (page - 1) * 15)
                     .limit(15);
                 totalProduct = await ProductModel.find({
                     $and: [{ category: category }, { type }],
@@ -278,7 +278,7 @@ module.exports = {
             // const temp = await comment.save();
             const product = await ProductModel.findById(id);
             for (let i = 0; i < product.comment.length; i++) {
-                if (product.comment[i]._id == idcomment) {
+                if (product.comment[i]._id === idcomment) {
                     product.comment[i].reply.push({
                         user: user1,
                         content,
@@ -305,7 +305,7 @@ module.exports = {
             listComment: cmtproduct.comment,
             totalPage: parseInt(cmtproduct.comment.length / 10) + 1,
             commentPerPage:
-                page == 1
+                page === 1
                     ? cmtproduct.comment.length < 10
                         ? cmtproduct.comment.length
                         : 10
